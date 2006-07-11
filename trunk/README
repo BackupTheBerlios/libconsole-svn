@@ -1,0 +1,19 @@
+libconsole v0.1.0
+================
+Version 1.0
+2006-07-10
+
+Copyright © 2006 by Joachim Klahr - All Rights Reserved
+
+
+Table of Contents
+-----------------
+
+  1. Introduction
+
+(1) Introduction
+----------------
+
+  libconsole is a C++ library that parses commands from the user and applies them on objects.
+
+  Read the doc/html/index.html file for full documentation.
