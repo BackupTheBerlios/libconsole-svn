@@ -30,7 +30,7 @@ namespace Console
 	public:
 		/*!
 		 * \param name Unique ID used by the console manager. */
-		inline Listener(const std::string &name) : mName(name) {}
+		inline explicit Listener(const std::string &name) : mName(name) {}
 		inline virtual ~Listener() {}
 
 		/*! This inherited function should be used to set up the commands the console
