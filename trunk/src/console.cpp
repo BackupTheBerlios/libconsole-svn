@@ -45,7 +45,7 @@ namespace Console
 	}
 
 	// -------------------------------------------------------------------------
-	void Manager::executeCommand(const std::string &command)
+	std::string Manager::executeCommand(const std::string &command)
 	{
 		std::vector<std::string> parsed = parse(command);
 
@@ -59,7 +59,7 @@ namespace Console
 					{
 						i->functionPtr(i->object, atoi(parsed[2].c_str()));
 
-						return;
+						return command;
 					}
 
 				std::vector<Ref1f>::iterator j;
@@ -68,12 +68,23 @@ namespace Console
 					{
 						j->functionPtr(j->object, static_cast<float>(atof(parsed[2].c_str())));
 
-						return;
+						return command;
 					}
+
+				return "Object \"" + parsed[0] + "\" or function \"" + parsed[1] + "\" not found.";
+			}
+			case 2:
+			{
+				std::vector<RefRs>::iterator k;
+				for(k = mRefRss.begin(); k != mRefRss.end(); ++k)
+					if(k->name == parsed[0] && k->function == parsed[1])
+						return parsed[0] + " " + parsed[1] + " = " + k->functionPtr(k->object);
+
+				return "Object \"" + parsed[0] + "\" or function \"" + parsed[1] + "\" not found.";
 			}
 			break;
 			default:
-				break;
+				return "Illegal number of arguments.";
 		}
 	}
 
@@ -106,6 +117,20 @@ namespace Console
 	}
 
 	// -------------------------------------------------------------------------
+	void Manager::addRefRs(const std::string &name, const std::string &function,
+				           void* object, std::string (*functionPtr)(void* object))
+	{
+		RefRs ref;
+
+		ref.name        = name;
+		ref.function    = function;
+		ref.object      = object;
+		ref.functionPtr = functionPtr;
+
+		mRefRss.push_back(ref);
+	}
+
+	// -------------------------------------------------------------------------
 	void Manager::removeRef1i(const std::string &name, const std::string &function)
 	{
 		std::vector<Ref1i>::iterator i;
@@ -126,6 +151,19 @@ namespace Console
 			if(i->name == name && i->function == function)
 			{
 				mRef1fs.erase(i);
+
+				return;
+			}
+	}
+
+	// -------------------------------------------------------------------------
+	void Manager::removeRefRs(const std::string &name, const std::string &function)
+	{
+		std::vector<RefRs>::iterator i;
+		for(i = mRefRss.begin(); i != mRefRss.end(); ++i)
+			if(i->name == name && i->function == function)
+			{
+				mRefRss.erase(i);
 
 				return;
 			}

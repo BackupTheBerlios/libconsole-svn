@@ -30,17 +30,15 @@ namespace Console
 	public:
 		/*!
 		 * \param name Unique ID used by the console manager. */
-		inline explicit Listener(const std::string &name) : mName(name) {}
+		inline explicit Listener(const std::string &name) : mObjectName(name) {}
 		inline virtual ~Listener() {}
 
 		/*! This inherited function should be used to set up the commands the console
 		    manager should be able recognize. */
 		virtual void initialize() = 0;
 
-		inline std::string getName() { return mName; }
-
 	protected:
-		std::string mName;
+		std::string mObjectName;
 	};
 
 	/*! The console manager uses references to the modifyable objects.
@@ -71,6 +69,12 @@ namespace Console
 		void (*functionPtr)(void* object, float param);
 	};
 
+	class RefRs : public Ref
+	{
+	public:
+		std::string (*functionPtr)(void* object);
+	};
+
 	/*! Console manager
 	 * \author Joachim Klahr
 	 * \version 0.1.0
@@ -85,7 +89,7 @@ namespace Console
 
 		/*! Performs the console action.
 		 * \param command Form: [objectname] [functionname] [value] */
-		void executeCommand(const std::string &command);
+		std::string executeCommand(const std::string &command);
 
 		/*! Adds references to objects and function
 		 * \param name Object name.
@@ -96,12 +100,15 @@ namespace Console
 			          void* object, void (*functionPtr)(void* object, int param));
 		void addRef1f(const std::string &name, const std::string &function,
 			          void* object, void (*functionPtr)(void* object, float param));
+		void addRefRs(const std::string &name, const std::string &function,
+					  void* object, std::string (*functionPtr)(void* object));
 
 		/*! Removes the specified reference.
 		 * \param name Object name.
 		 * \param function Function name. */
 		void removeRef1i(const std::string &name, const std::string &function);
 		void removeRef1f(const std::string &name, const std::string &function);
+		void removeRefRs(const std::string &name, const std::string &function);
 
 	private:
 		Manager();
@@ -115,6 +122,7 @@ namespace Console
 
 		std::vector<Ref1i> mRef1is;
 		std::vector<Ref1f> mRef1fs;
+		std::vector<RefRs> mRefRss;
 	};
 }
 
